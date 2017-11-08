@@ -1,4 +1,4 @@
-#include "monocamera_visual_odometry_kalman_filter/component_monocamera_visual_odometry_kalman_filter.h"
+#include "monocamera_visual_odometry_kalman_filter/component_filter.h"
 
 ComponentFilter::ComponentFilter()
 {
@@ -6,7 +6,7 @@ ComponentFilter::ComponentFilter()
     ros::NodeHandle local_nh("~");
     local_nh.getParam("kal_Q", kal_Q_);
     local_nh.getParam("kal_R", kal_R_);
-    ROS_INFO("kal_Q: %f, kal_R: %f", kal_Q_, kal_R_);
+    //ROS_INFO("kal_Q: %f, kal_R: %f", kal_Q_, kal_R_);
     //kal_Q_=10.0;
     //kal_R_=0.01;
 
@@ -40,7 +40,6 @@ void ComponentFilter::computeKalman(double odom_vel, bool got_lost)
 void ComponentFilter::updateMeasurements(double odom_vel, double dt)
 {
     double eps = odom_vel - (C_*x_k_).val[0][0];
-    //ROS_INFO("dt: %f", dt);
     double S = (C_*P_k_*~C_).val[0][0] + kal_R_;
     Matrix K = P_k_*~C_/S;
     x_k_ = x_k_ + K*eps;
@@ -56,8 +55,18 @@ void ComponentFilter::countEstimation()
 void ComponentFilter::updateMatrices(double dt)
 {   
     A_.val[0][1]=dt;
-    //std::cout<<A_;
     G_.val[0][0]=(dt*dt)/2;
     G_.val[1][0]=dt;
-    //std::cout<<G_;
 }
+
+void ComponentFilter::computeMean(double odom_vel, bool got_lost)
+{
+    if(!got_lost)
+    {
+        mean_ = (last_vel_+old_vel_+odom_vel)/3;
+        x_k_.val[0][0] = mean_;
+    }
+}
+
+
+

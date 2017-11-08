@@ -40,7 +40,7 @@ include_directories(
 ## Libraries ##
 
 add_library(${PROJECT_NAME}
-  src/${PROJECT_NAME}/component_kalman.cpp
+  src/${PROJECT_NAME}/component_filter.cpp
 )
 
 #target_link_libraries(${PROJECT_NAME}

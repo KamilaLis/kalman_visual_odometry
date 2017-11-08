@@ -1,3 +1,6 @@
+#ifndef COMPONENTODOM_H
+#define COMPONENTODOM_H
+
 #include <iostream>
 #include <stdlib.h>
 
@@ -14,7 +17,10 @@ public:
 
     ComponentFilter();
     void computeKalman(double odom_vel, bool got_lost);
+    void computeMean(double odom_vel, bool got_lost);
     double getVelocity();
+    double last_vel_=0;
+    double old_vel_=0;
 
 protected:
 
@@ -35,6 +41,7 @@ private:
     Matrix G_;
     Matrix C_;
 
+    double mean_=0;
 };
 
-
+#endif //COMPONENT
